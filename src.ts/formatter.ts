@@ -7,7 +7,6 @@ export class Formatter extends providers.Formatter {
     if (!value.gasLimit) {
       value.gasLimit = '0x0';
     }
-    console.log({ value });
     return super._block(value, format);
   }
 }

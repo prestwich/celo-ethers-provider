@@ -9,7 +9,6 @@ let defaultFormatter: null | Formatter = null;
 
 export class CeloJsonRpcProvider extends providers.JsonRpcProvider {
   static getFormatter(): Formatter {
-    console.log('Using mine');
     if (defaultFormatter == null) {
       defaultFormatter = new Formatter();
     }
@@ -35,7 +34,6 @@ export class CeloJsonRpcProvider extends providers.JsonRpcProvider {
 
 export class CeloWebsocketProvider extends providers.WebSocketProvider {
   static getFormatter(): Formatter {
-    console.log('Using mine');
     if (defaultFormatter == null) {
       defaultFormatter = new Formatter();
     }
@@ -54,6 +52,32 @@ export class CeloWebsocketProvider extends providers.WebSocketProvider {
           value: networkish,
         },
       );
+    }
+    return network;
+  }
+}
+
+export class StaticCeloJsonRpcProvider extends CeloJsonRpcProvider {
+  async detectNetwork(): Promise<providers.Network> {
+    let network = this.network;
+    if (network == null) {
+      network = await super.detectNetwork();
+
+      if (!network) {
+        logger.throwError(
+          'no network detected',
+          utils.Logger.errors.UNKNOWN_ERROR,
+          {},
+        );
+      }
+
+      // If still not set, set it
+      if (this._network == null) {
+        // A static network does not support "any"
+        utils.defineReadOnly(this, '_network', network);
+
+        this.emit('network', network, null);
+      }
     }
     return network;
   }
