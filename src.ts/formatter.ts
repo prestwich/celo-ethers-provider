@@ -2,16 +2,12 @@ import { Block } from '@ethersproject/abstract-provider';
 import { providers } from 'ethers';
 
 export class Formatter extends providers.Formatter {
-  constructor() {
-    super();
-    this.formats.block = {};
-  }
-
   // eslint-disable-next-line
   _block(value: any, format: any): Block {
-    if (value.gasLimit === null) {
-      value.gasLimit = 0;
+    if (!value.gasLimit) {
+      value.gasLimit = '0x0';
     }
+    console.log({ value });
     return super._block(value, format);
   }
 }
